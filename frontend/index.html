@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Бронирование кабинетов</title>
+<style>
+  body { font-family: sans-serif; max-width: 720px; margin: 40px auto; padding: 0 16px; }
+  h1 { font-size: 26px; }
+  .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: end; margin-bottom: 16px; }
+  label { display: flex; flex-direction: column; font-size: 14px; gap: 4px; }
+  input, select, button { padding: 8px; font-size: 15px; }
+  button { cursor: pointer; }
+  table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+  th, td { text-align: left; padding: 8px; border-bottom: 1px solid #ddd; }
+  #message { min-height: 22px; color: #b00020; margin: 8px 0; }
+  .empty { color: #777; }
+</style>
+</head>
+<body>
+
+<h1>Бронирование кабинетов</h1>
+
+<!-- Выбор даты: показываем брони на выбранный день -->
+<div class="row">
+  <label>Дата
+    <input type="date" id="date">
+  </label>
+</div>
+
+<table>
+  <thead>
+    <tr><th>Кабинет</th><th>Время</th><th>Кто</th><th></th></tr>
+  </thead>
+  <tbody id="bookings"></tbody>
+</table>
+
+<h2>Новая бронь</h2>
+<div class="row">
+  <label>Кабинет
+    <select id="room"></select>
+  </label>
+  <label>Начало
+    <input type="time" id="start" value="10:00">
+  </label>
+  <label>Конец
+    <input type="time" id="end" value="11:00">
+  </label>
+  <label>Ваше имя
+    <input type="text" id="name" placeholder="Анна">
+  </label>
+  <button id="submit">Забронировать</button>
+</div>
+<div id="message"></div>
+
+<script>
+// Адрес сервера. Если бэкенд запущен у напарника, замените localhost на его IP,
+// например "http://192.168.1.45:3000"
+const API_BASE = "http://localhost:3000";
+
+const dateEl = document.getElementById("date");
+const roomEl = document.getElementById("room");
+const startEl = document.getElementById("start");
+const endEl = document.getElementById("end");
+const nameEl = document.getElementById("name");
+const submitEl = document.getElementById("submit");
+const bookingsEl = document.getElementById("bookings");
+const messageEl = document.getElementById("message");
+
+let roomNames = {};  // id кабинета -> название, например { 1: "Кабинет 101" }
+
+// Сегодняшняя дата в формате ГГГГ-ММ-ДД (в местном часовом поясе)
+dateEl.value = new Date().toLocaleDateString("sv-SE");
+
+function showMessage(text) {
+  messageEl.textContent = text;
+}
+
+// Загружаем список кабинетов и заполняем выпадающий список
+async function loadRooms() {
+  const res = await fetch(`${API_BASE}/api/rooms`);
+  const rooms = await res.json();
+  roomEl.innerHTML = "";
+  rooms.forEach((r) => {
+    roomNames[r.id] = r.name;
+    const option = document.createElement("option");
+    option.value = r.id;
+    option.textContent = r.name;
+    roomEl.appendChild(option);
+  });
+}
+
+// Загружаем брони на выбранную дату и рисуем таблицу
+async function loadBookings() {
+  try {
+    const res = await fetch(`${API_BASE}/api/bookings?date=${dateEl.value}`);
+    const bookings = await res.json();
+    renderBookings(bookings);
+  } catch (err) {
+    showMessage("Сервер недоступен: проверьте адрес и что сервер запущен");
+  }
+}
+
+function renderBookings(bookings) {
+  bookingsEl.innerHTML = "";
+  if (bookings.length === 0) {
+    const tr = document.createElement("tr");
+    const td = document.createElement("td");
+    td.colSpan = 4;
+    td.className = "empty";
+    td.textContent = "На эту дату броней нет";
+    tr.appendChild(td);
+    bookingsEl.appendChild(tr);
+    return;
+  }
+  bookings.forEach((b) => {
+    const tr = document.createElement("tr");
+    // textContent вместо innerHTML: так чужой текст не сможет внедрить свой HTML-код
+    [roomNames[b.roomId], `${b.start}–${b.end}`, b.name].forEach((text) => {
+      const td = document.createElement("td");
+      td.textContent = text;
+      tr.appendChild(td);
+    });
+    const actionTd = document.createElement("td");
+    const btn = document.createElement("button");
+    btn.textContent = "Отменить";
+    btn.addEventListener("click", () => cancelBooking(b.id));
+    actionTd.appendChild(btn);
+    tr.appendChild(actionTd);
+    bookingsEl.appendChild(tr);
+  });
+}
+
+async function createBooking() {
+  const body = {
+    roomId: Number(roomEl.value),
+    date: dateEl.value,
+    start: startEl.value,
+    end: endEl.value,
+    name: nameEl.value,
+  };
+  try {
+    const res = await fetch(`${API_BASE}/api/bookings`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    const data = await res.json();
+    if (res.ok) {
+      showMessage("");
+      loadBookings();
+    } else {
+      showMessage(data.error);  // например: "Кабинет в это время уже занят"
+    }
+  } catch (err) {
+    showMessage("Сервер недоступен: проверьте адрес и что сервер запущен");
+  }
+}
+
+async function cancelBooking(id) {
+  const res = await fetch(`${API_BASE}/api/bookings/${id}`, { method: "DELETE" });
+  // При успехе сервер отвечает 204 без тела, поэтому res.json() здесь не вызываем
+  if (res.ok) {
+    showMessage("");
+    loadBookings();
+  } else {
+    showMessage("Не удалось отменить бронь");
+  }
+}
+
+submitEl.addEventListener("click", createBooking);
+dateEl.addEventListener("change", loadBookings);
+
+async function start() {
+  try {
+    await loadRooms();
+    await loadBookings();
+  } catch (err) {
+    showMessage("Сервер недоступен: проверьте адрес и что сервер запущен");
+  }
+}
+
+start();
+// Раз в 3 секунды обновляем таблицу, чтобы видеть брони других людей
+setInterval(loadBookings, 3000);
+</script>
+
+</body>
+</html>
