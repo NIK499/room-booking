@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<title>TechHub Tower — бронирование кабинетов</title>
+		<title>Бронирование аудиторий</title>
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<link
@@ -15,7 +15,7 @@
 	<body>
 		<header>
 			<div class="wrap bar">
-				<a class="logo" href="#top" aria-label="TechHub Tower, на главную">
+				<a class="logo" href="#top" aria-label="Бронирование аудиторий, на главную">
 					<svg viewBox="0 0 28 28" aria-hidden="true">
 						<rect width="28" height="28" rx="7" fill="var(--accent)" />
 						<path
@@ -25,10 +25,10 @@
 							stroke-linecap="round"
 							fill="none"
 						/></svg
-					><span>TechHub Tower</span></a
+					><span>Бронирование</span></a
 				>
 				<nav aria-label="Основная навигация">
-					<a href="#rooms">Кабинеты</a><a href="#bookings">Мои брони</a
+					<a href="#rooms">Аудитории</a><a href="#bookings">Мои брони</a
 					><a href="#contacts">Контакты</a>
 				</nav>
 				<button class="btn" id="login" type="button">Войти</button>
@@ -37,10 +37,9 @@
 
 		<main id="top">
 			<div class="wrap hero">
-				<h1>Кабинеты для команд и встреч</h1>
+				<h1>Аудитории для занятий и встреч</h1>
 				<p>
-					Переговорные, кабинеты и небольшие офисы в бизнес-центре для
-					IT-компаний. Выберите время и забронируйте за пару минут.
+					Выберите площадку, аудиторию и время. Забронируйте за пару минут.
 				</p>
 				<form class="search" id="search" aria-label="Быстрый поиск" novalidate>
 					<div>
@@ -54,18 +53,7 @@
 						<label for="h-e">Окончание</label
 						><select id="h-e"></select>
 					</div>
-					<div>
-						<label for="h-n">Человек</label
-						><input
-							type="number"
-							id="h-n"
-							min="1"
-							max="40"
-							value="2"
-							inputmode="numeric"
-						/>
-					</div>
-					<button class="btn primary" type="submit">Найти кабинеты</button>
+					<button class="btn primary" type="submit">Найти аудитории</button>
 					<p
 						class="hint"
 						id="h-err"
@@ -79,12 +67,12 @@
 			<section id="rooms">
 				<div class="wrap">
 					<div class="sec-h">
-						<h2>Кабинеты</h2>
+						<h2>Аудитории</h2>
 						<div class="seg" role="group" aria-label="Режим просмотра">
 							<button type="button" id="v-list" aria-pressed="true">
 								Список</button
 							><button type="button" id="v-map" aria-pressed="false">
-								План этажа
+								План площадки
 							</button>
 						</div>
 					</div>
@@ -99,30 +87,26 @@
 						<div class="fgrid">
 							<div class="wide">
 								<label for="f-q">Поиск по названию</label
-								><input type="search" id="f-q" placeholder="Например, «Ядро»" />
+								><input type="search" id="f-q" placeholder="Например, «Аудитория 1»" />
 							</div>
 							<div>
-								<label for="f-floor">Этаж</label
-								><select id="f-floor"></select>
+								<label for="f-site">Площадка</label
+								><select id="f-site"></select>
 							</div>
 							<div>
-								<label for="f-cap">Вместимость</label
-								><select id="f-cap"></select>
+								<label for="f-manager">Менеджер</label
+								><select id="f-manager"></select>
 							</div>
-							<fieldset class="wide">
-								<legend class="lbl">Оборудование</legend>
-								<div class="checks" id="f-eq"></div>
-							</fieldset>
 							<button class="btn" type="button" id="reset">Сбросить</button>
 						</div>
 					</details>
 					<div class="grid" id="grid"></div>
 					<div id="plan" hidden>
-						<div class="ftabs" id="floors" role="group" aria-label="Этаж"></div>
+						<div class="ftabs" id="sites" role="group" aria-label="Площадка"></div>
 						<div class="planbox"><div id="plan-svg"></div></div>
 						<p id="plan-info" aria-live="polite">
-							Наведите на кабинет или выберите его с клавиатуры. Затемнённые
-							кабинеты не подходят под фильтры.
+							Наведите на аудиторию или выберите её с клавиатуры. Затемнённые
+							аудитории не подходят под фильтры.
 						</p>
 					</div>
 				</div>
@@ -139,23 +123,13 @@
 		<footer id="contacts">
 			<div class="wrap fcols">
 				<div>
-					<h3>TechHub Tower</h3>
-					<p>Москва, Технопарковая ул., 15</p>
-					<p>Метро «Технопарк», 5 минут пешком</p>
+					<h3>Контакты</h3>
+					<p>Телефон: +7 (XXX) XXX-XX-XX</p>
+					<p>Email: booking@example.com</p>
 				</div>
 				<div>
 					<h3>Часы работы</h3>
 					<p>Бронирование: ежедневно 08:00–22:00</p>
-					<p>Ресепшн: пн–пт 08:00–20:00</p>
-				</div>
-				<div>
-					<h3>Контакты</h3>
-					<p><a href="tel:+74950000000">+7 (495) 000-00-00</a></p>
-					<p>
-						<a href="mailto:hello@techhub-tower.example"
-							>hello@techhub-tower.example</a
-						>
-					</p>
 				</div>
 			</div>
 		</footer>
@@ -181,6 +155,7 @@
 			</div>
 		</dialog>
 		<div id="toast" role="status" aria-live="polite"></div>
+		<div id="message" role="alert" style="display:none; padding:10px; margin:10px 0; border-radius:4px;"></div>
 		<script src="script.js"></script>
 	</body>
 </html>
