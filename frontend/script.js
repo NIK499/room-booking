@@ -426,7 +426,6 @@ let lastFocus = null;
 const FIELDS = {
 	// правила валидации
 	name: v => (v.trim().length < 2 ? "Введите имя (не короче 2 символов)." : ""),
-	company: v => (v.trim().length < 2 ? "Укажите название компании." : ""),
 	email: v =>
 		/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim())
 			? ""
@@ -456,7 +455,6 @@ function openRoom(id) {
      <div class="sum" id="sum" aria-live="polite"></div></div>
     <form id="bf" novalidate aria-label="Данные для бронирования">
      <div class="row"><label for="f-name">Имя</label><input id="f-name" name="name" autocomplete="name" required aria-describedby="e-name"><p class="err" id="e-name"></p></div>
-     <div class="row"><label for="f-company">Компания</label><input id="f-company" name="company" autocomplete="organization" required aria-describedby="e-company"><p class="err" id="e-company"></p></div>
      <div class="row"><label for="f-email">Email</label><input id="f-email" name="email" type="email" autocomplete="email" required aria-describedby="e-email"><p class="err" id="e-email"></p></div>
      <div class="row"><label for="f-phone">Телефон</label><input id="f-phone" name="phone" type="tel" autocomplete="tel" placeholder="+7 900 123-45-67" required aria-describedby="e-phone"><p class="err" id="e-phone"></p></div>
      <div class="row"><label for="f-comment">Комментарий (необязательно)</label><textarea id="f-comment" name="comment"></textarea></div>
@@ -551,7 +549,6 @@ function submitBooking(e) {
 		b: sel.b,
 		total: sel.room.price * h,
 		name: f.name.trim(),
-		company: f.company.trim(),
 		email: f.email.trim(),
 		phone: f.phone.trim(),
 		comment: (f.comment || "").trim(),
